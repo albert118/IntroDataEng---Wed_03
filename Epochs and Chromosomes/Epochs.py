@@ -5,20 +5,27 @@
 	Author: Albert Ferguson """
 
 from random import randint
+import inspect
+import sys
 
 class Epoch():
 	def __init__(self, debug, **kwargs):
 	# kwargs dict: 4 vals
 	# learnRate, numTerminals, numConcentrators, maxConcentrators
 		try:
-			if(debug):
-				argDict = {
-					'numTerminals': 12, 'numConcentrators': 8, 
-					'maxConcentrators': 3,'learnRate': 0.05 
-					}
+			if(debug and not kwargs):
+				print("Running the debug Epoch!")
+				self.generation = 0
+				self.probVec = [0.5] * 12
+				self.LR = 0.05
+				self.terminalCount = 12
+				self.conentratorCount = 8
+				self.maxConcCount = 3
 
-				debugEpoch = self.__init__(0, argDict)
-				debugEpoch.printEpoch()
+				self.chromosomes = []
+				self.numChromosomes = 12
+				self.initSolutions()
+				self.printEpoch()
 
 			elif (not debug):
 				self.generation = 0
@@ -31,6 +38,7 @@ class Epoch():
 				self.chromosomes = []
 				self.numChromosomes = kwargs[numTerminals]
 				self.initSolutions()
+
 			else:
 				raise Exception(list(kwargs))
 		except Exception as inst:
@@ -38,10 +46,14 @@ class Epoch():
 			print(inst.args)
 			print(inst)
 			print("Bad argument format")
+			print()
+			print(inspect.getargvalues(sys._getframe()))
+			
+
 
 	def initSolutions(self):
 		for i in range(self.numChromosomes):
-			self.chromosomes.append(Solution(numTerminals, numConcentrators, maxConcentrators))
+			self.chromosomes.append(Solution(self.terminalCount, self.conentratorCount, self.maxConcCount))
 
 	def __str__(self):
 		return self.generation
@@ -102,5 +114,3 @@ class Solution(Chromosome):
 	def printSolutionSet(self):
 		print("Terminals: {}\t Concentrators: {}\t".format(self.terminalCount, self.conentratorCount))
 		print("Network Connections:\n{}\n".format(self.network))
-
-test = Epoch(1)
