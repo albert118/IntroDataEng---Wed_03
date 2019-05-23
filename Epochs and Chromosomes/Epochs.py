@@ -7,27 +7,37 @@
 from random import randint
 
 class Epoch():
-	# TODO, implement *args, **kwargs functionality for debugging option
-	def __init__(self, learnRate, numTerminals, numConcentrators, maxConcentrators, debug):
-		if(debug):
-			numTerminals = 12
-			numConcentrators = 8
-			maxConcentrators = 3
-			learnRate = 0.05
+	def __init__(self, debug, **kwargs):
+	# kwargs dict: 4 vals
+	# learnRate, numTerminals, numConcentrators, maxConcentrators
+		try:
+			if(debug):
+				argDict = {
+					'numTerminals': 12, 'numConcentrators': 8, 
+					'maxConcentrators': 3,'learnRate': 0.05 
+					}
 
-			newGen = Epoch(learnRate, numTerminals, numConcentrators, maxConcentrators)
-			newGen.printEpoch()
-		else:
-			self.generation = 0
-			self.probVec = [0.5] * numTerminals
-			self.learnRate = learnRate
-			self.terminalCount = numTerminals
-			self.conentratorCount = numConcentrators
-			self.maxConcCount = maxConcentrators
+				debugEpoch = self.__init__(0, argDict)
+				debugEpoch.printEpoch()
 
-			self.chromosomes = []
-			self.numChromosomes = numTerminals
-			self.initSolutions()
+			elif (not debug):
+				self.generation = 0
+				self.probVec = [0.5] * kwargs[numTerminals]
+				self.LR = kwargs[learnRate]
+				self.terminalCount = kwargs[numTerminals]
+				self.conentratorCount = kwargs[numConcentrators]
+				self.maxConcCount = kwargs[maxConcentrators]
+
+				self.chromosomes = []
+				self.numChromosomes = kwargs[numTerminals]
+				self.initSolutions()
+			else:
+				raise Exception(list(kwargs))
+		except Exception as inst:
+			print(type(inst))
+			print(inst.args)
+			print(inst)
+			print("Bad argument format")
 
 	def initSolutions(self):
 		for i in range(self.numChromosomes):
@@ -36,9 +46,9 @@ class Epoch():
 	def __str__(self):
 		return self.generation
 
-	def updateProbVec(self, learnRate, chromosome):
+	def updateProbVec(self):
 		for i in range(len(probVec)):
-			newProbVec[i] = self.probVec[i]
+			newProbVec[i] = self.probVec[i] + self.chromosomes[i] * self.LR
 		self.probVec = newProbVec
 
 	def nextGen(self, chromosomeIDs):
@@ -93,11 +103,4 @@ class Solution(Chromosome):
 		print("Terminals: {}\t Concentrators: {}\t".format(self.terminalCount, self.conentratorCount))
 		print("Network Connections:\n{}\n".format(self.network))
 
-
-numTerminals = 12
-numConcentrators = 8
-maxConcentrators = 3
-learnRate = 0.05
-
-tester = Epoch(learnRate, numTerminals, numConcentrators, maxConcentrators, 0)
-tester.printEpoch()
+test = Epoch(1)
