@@ -5,15 +5,16 @@
 	Author: Albert Ferguson """
 
 from random import randint
-import inspect
-import sys
+from inspect import getargvalues
+from sys import _getframe
 
 class Epoch():
 	def __init__(self, debug, **kwargs):
 	# kwargs dict: 4 vals
 	# learnRate, numTerminals, numConcentrators, maxConcentrators
 		try:
-			if(debug and not kwargs):
+			# debug default values, sanity check if debug enabled
+			if(debug):
 				print("Running the debug Epoch!")
 				self.generation = 0
 				self.probVec = [0.5] * 12
@@ -24,7 +25,9 @@ class Epoch():
 
 				self.chromosomes = []
 				self.numChromosomes = 12
-				self.initSolutions()
+				# init the chromosomes (bit list)
+				self.initSolutions() 
+				# print the data back to stdout
 				self.printEpoch()
 
 			elif (not debug):
@@ -37,42 +40,46 @@ class Epoch():
 
 				self.chromosomes = []
 				self.numChromosomes = kwargs[numTerminals]
+				# init the chromosomes (bit list)
 				self.initSolutions()
 
 			else:
 				raise Exception(list(kwargs))
 		except Exception as inst:
 			print(type(inst))
-			print(inst.args)
 			print(inst)
 			print("Bad argument format")
 			print()
-			print(inspect.getargvalues(sys._getframe()))
-			
-
-
-	def initSolutions(self):
-		for i in range(self.numChromosomes):
-			self.chromosomes.append(Solution(self.terminalCount, self.conentratorCount, self.maxConcCount))
+			print(getargvalues(_getframe()))
 
 	def __str__(self):
 		return self.generation
 
+	# initialise the solution set (bit list of concentrators
+	# connected to terminals)
+	def initSolutions(self):
+		for i in range(self.numChromosomes):
+			self.chromosomes.append(Solution(self.terminalCount, self.conentratorCount, self.maxConcCount))
+
+	# update prob_vec using the learning rate
 	def updateProbVec(self):
 		for i in range(len(probVec)):
 			newProbVec[i] = self.probVec[i] + self.chromosomes[i] * self.LR
 		self.probVec = newProbVec
 
+	# increment generation and update prob_vec
 	def nextGen(self, chromosomeIDs):
 		self.generation += 1
 		self.numChromosomes = len(chromosomeIDs)
 		self.chromosomes = chromosomeIDs
 
+	# formatted epoch and solution set printing
 	def printEpoch(self):
 		print("Generation: {}\t Chromosome Count: {}".format(self.generation, self.numChromosomes))
 		for i in range(self.numChromosomes):
 			self.chromosomes[i].printSolutionSet()
 
+# the base class solution sets inherit from
 class Chromosome():
 	""" The parent class for all solution children classes. """
 	def __init__(self, chromID):
@@ -81,6 +88,8 @@ class Chromosome():
 	def __str__(self):
 		return self.ID
 
+# solution set class defintion 
+# for the terminal-concentrator problem
 class Solution(Chromosome):
 	def __init__(self, numTerminals, numConcentrators, maxConcentrators):
 		self.terminalCount = numTerminals
