@@ -1,4 +1,4 @@
-# Machine Learning - Stochastic Optimization (30%)
+# Machine Learning - Stochastic Optimization
 
 ### IDEA:
 *Utilise the PBIL algorithm (essentially a basic genetic algorithm in this case) to stochasticlly optimise the concentrator - terminal problem.*
